@@ -1,5 +1,4 @@
-import { createContext, useState } from "react";
-import { productsArray, getProductData } from "./productStore";
+import { createContext, useState, useEffect } from "react";
 
 export const CartContext = createContext({
     items: [],
@@ -7,10 +6,26 @@ export const CartContext = createContext({
     addOneToCart: () => {},
     removeOneFromCart: () => {},
     deleteFromCart: () => {},
-    getTotalCost: () => {}
+    getTotalCost: () => {},
+    resetCart: () => {}
 });
 
 export function CartProvider({children}) {
+
+    //fetcheljük az adatokat mielőtt dolgozunk vele
+    const [products, setProducts] = useState([]);
+
+    useEffect(() => {
+        fetch('http://127.0.0.1:5000/ticket')
+            .then((response) => response.json())
+            .then((data) => {
+                console.log("micsoda ? : ", data);
+                setProducts(data);
+            })
+            .catch(console.error);
+    }, []);
+    // fetch vége
+    
     const [cartProducts, setCartProducts] = useState([]);
 
     // termékek össz-darabszáma
@@ -60,10 +75,15 @@ export function CartProvider({children}) {
     function getTotalCost() {
         let totalCost = 0;
         cartProducts.map((cartItem) => {
-            const productData = getProductData(cartItem.id);
+            const productData = products.find(product => product.id == cartItem.id);
             totalCost += (productData.price * cartItem.quantity);
         });
         return totalCost;
+    }
+
+    //lenulláza a shopping cartot 
+    function resetCart() {
+        setCartProducts([]);
     }
     
     const contextValue = {
@@ -72,7 +92,8 @@ export function CartProvider({children}) {
         addOneToCart,
         removeOneFromCart,
         deleteFromCart,
-        getTotalCost
+        getTotalCost,
+        resetCart
     }
     
     return (

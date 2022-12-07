@@ -2,6 +2,7 @@ import { Button, Container, Navbar, Modal, Nav } from "react-bootstrap";
 import { useState, useContext } from "react";
 import { CartContext } from "../CartContext";
 import CartProduct from "./CartProduct";
+import Form from "./Form";
 
 function NavbarComponent() {
     const cart = useContext(CartContext);
@@ -21,7 +22,6 @@ function NavbarComponent() {
             <Navbar.Collapse className="justify-content-end">
                 <Button onClick={handleShow}>Cart ({productsCount}Items)</Button>
             </Navbar.Collapse>
-
             <Modal show={show} onHide={handleClose}>
                 <Modal.Header closeButton>
                     <Modal.Title>Shopping Cart</Modal.Title>
@@ -35,13 +35,13 @@ function NavbarComponent() {
                         ))}
 
                         <h2>Total: {cart.getTotalCost().toFixed(2)}</h2>
-                        <Button variant="success">Purchase items!</Button>
+                        <Form />
                         </>
                         :
-                        <h3>There are no items in your cart!</h3>
-                        
+                        <>
+                            <h3>There are no items in your cart!</h3>
+                        </>
                     }
-
                 </Modal.Body>
             </Modal>
 
